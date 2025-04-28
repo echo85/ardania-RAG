@@ -18,6 +18,7 @@ lib/
 lib64/
 parts/
 sdist/
+chroma_langchain_db/
 var/
 wheels/
 share/python-wheels/
