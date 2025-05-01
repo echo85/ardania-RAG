@@ -5,17 +5,17 @@ from langchain_chroma import Chroma
 from langchain_ollama import OllamaEmbeddings
 
 embeddings = OllamaEmbeddings(
-    model="mxbai-embed-large:latest",
+    model="DC1LEX/nomic-embed-text-v1.5-multimodal:latest",
 )
 
 vector_store = Chroma(
     collection_name="ardania_collection",
     embedding_function=embeddings,
-    persist_directory="./chroma_langchain_db",  # Where to save data locally, remove if not necessary
+    persist_directory="./chroma_langchain_dbnomic15",  # Where to save data locally, remove if not necessary
 )
 
 # Directory to your pdf files:
-DATA_PATH = "./data/"
+DATA_PATH = "../data/"
 
 
 def load_documents():

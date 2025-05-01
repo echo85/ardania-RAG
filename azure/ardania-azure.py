@@ -15,9 +15,9 @@ key = os.getenv("AZURE_INFERENCE_SDK_KEY")
 
 
 # SEARCH SERVICE
-index_name = "ardaniaindex"
-index_vector_field = "contentVector"
-index_field_content = "content"
+index_name = "ardania-index-ai"
+index_vector_field = "text_vector"
+index_field_content = "chunk"
 search_endpoint = os.getenv("AZURE_SEARCH_ENDPOINT")
 search_key = os.getenv("SEARCH_SERVICE_QUERY_KEY")
 
