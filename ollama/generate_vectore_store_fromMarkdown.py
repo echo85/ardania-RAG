@@ -90,10 +90,3 @@ vector_store = Chroma.from_documents(
 print("----- Indexing Complete -----")
 print(f"Vector store created and persisted at: {PERSIST_DIRECTORY}")
 print(f"Number of vectors stored: {vector_store._collection.count()}")
-
-# --- Example: How to load the store later ---
-# print("\nTo load the store later:")
-# print(f"embeddings = HuggingFaceEmbeddings(model_name='{MODEL_NAME}', model_kwargs={model_kwargs}, encode_kwargs={encode_kwargs})")
-# print(f"vector_store = Chroma(persist_directory='{PERSIST_DIRECTORY}', embedding_function=embeddings)")
-# print("# Now you can create a retriever:")
-# print("retriever = vector_store.as_retriever()")

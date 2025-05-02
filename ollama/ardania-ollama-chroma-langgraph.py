@@ -1,18 +1,15 @@
 from langchain_ollama import ChatOllama
 from langchain_core.messages import AIMessage
 from langchain_chroma import Chroma
-from langchain_ollama import OllamaEmbeddings
 from langchain_core.prompts import PromptTemplate
 from langgraph.graph import START, StateGraph
 from typing_extensions import List, TypedDict
 from langchain_core.documents import Document
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.retrievers import ContextualCompressionRetriever
-from langchain.retrievers.document_compressors import LLMChainExtractor
-from langchain.retrievers.document_compressors import LLMChainFilter
 from langchain.retrievers.document_compressors import EmbeddingsFilter
-
-
+from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain_community.document_transformers import LongContextReorder
 import os
 from dotenv import load_dotenv
 
@@ -36,17 +33,16 @@ vector_store = Chroma(
 
 
 llm = ChatOllama(
-    model="gemma3:12b",
+    model="qwen3:8b",
     temperature=0,
 )
 
 PROMPT_TEMPLATE = """
 Sei un assistente che fornisce informazioni sul mondo di Ardania GDR Ultima On Line.
 Rispondi alla domanda in base al contesto fornito di seguito:
-
 {context}
 - -
-Rispondi alla domanda in base al contesto fornito sopra: {question}
+Rispondi alla domanda in base al contesto fornito sopra: {question} /no_think
 """
 
 
@@ -57,35 +53,34 @@ class State(TypedDict):
 
 
 def retrieve(State: State) -> State:
-    llm_filter = ChatOllama(
-        model="gemma3:4b",
-        temperature=0,
-    )
-    # _filter = LLMChainExtractor.from_llm(llm)
-    _filter = LLMChainFilter.from_llm(llm_filter)
-    # _filter = EmbeddingsFilter(embeddings=embeddings, similarity_threshold=0.76)
+    _filter = EmbeddingsFilter(embeddings=embeddings, similarity_threshold=0.76)
     compression_retriever = ContextualCompressionRetriever(
         base_compressor=_filter,
-        base_retriever=vector_store.as_retriever(search_kwargs={"k": 10}),
+        base_retriever=vector_store.as_retriever(search_kwargs={"k": 30}),
     )
     compressed_docs = compression_retriever.invoke(State["question"])
+
     # results = vector_store.similarity_search_with_score(State["question"], k=50)
     State["context"] = compressed_docs
     return State
 
 
 def generate(State: State) -> State:
-    sources_formatted = "=================\n".join(
-        [res.page_content for res in State["context"]]
-    )
+    reordering = LongContextReorder()
+    reordered_docs = reordering.transform_documents(State["context"])
+    """ sources_formatted = "=================\n".join(
+        [res.page_content for res in reordered_docs]
+    ) """
 
     prompt_template = PromptTemplate.from_template(PROMPT_TEMPLATE)
-    message = prompt_template.invoke(
+    chain = create_stuff_documents_chain(llm, prompt_template)
+    response = chain.invoke({"context": reordered_docs, "question": State["question"]})
+    """ message = prompt_template.invoke(
         {"question": State["question"], "context": sources_formatted}
-    )
+    ) """
 
-    response = llm.invoke(message)
-    State["answer"] = response.content
+    # response = llm.invoke(message)
+    State["answer"] = response
     return State
 
 
