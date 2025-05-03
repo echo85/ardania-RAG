@@ -5,7 +5,7 @@ from langchain_core.prompts import PromptTemplate
 from langgraph.graph import START, StateGraph
 from typing_extensions import List, TypedDict
 from langchain_core.documents import Document
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_ollama import OllamaEmbeddings
 from langchain.retrievers import ContextualCompressionRetriever
 from langchain.retrievers.document_compressors import EmbeddingsFilter
 from langchain.chains.combine_documents import create_stuff_documents_chain
@@ -20,17 +20,23 @@ os.environ["LANGSMITH_API_KEY"] = os.environ.get("LANGSMITH_API_KEY")
 OLAMA_API_KEY = os.environ.get("OLAMA_API_KEY")
 OLAMA_API_URL = os.environ.get("OLAMA_API_URL")
 MODEL = "gemma3:12b"
+EMBEDDING_MODEL = "jeffh/intfloat-multilingual-e5-large:f16"
 
-embeddings = HuggingFaceEmbeddings(model_name="intfloat/multilingual-e5-large")
+headers = {
+    "Authorization": f"Bearer {OLAMA_API_KEY}",
+}
+
+embeddings = OllamaEmbeddings(
+    model=EMBEDDING_MODEL,
+    base_url=OLAMA_API_URL,
+    client_kwargs={"headers": headers},
+)
 
 vector_store = Chroma(
     embedding_function=embeddings,
     persist_directory="./chroma_db_ardania",  # Where to save data locally, remove if not necessary
 )
 
-heders = headers = {
-    "Authorization": f"Bearer {OLAMA_API_KEY}",
-}
 llm = ChatOllama(
     base_url=OLAMA_API_URL,
     client_kwargs={"headers": headers},

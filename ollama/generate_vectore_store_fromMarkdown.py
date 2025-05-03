@@ -1,10 +1,11 @@
 import os
 from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-
-# Use HuggingFaceEmbeddings for models like E5, BGE, Sentence-Transformers
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_ollama import OllamaEmbeddings
 from langchain_chroma import Chroma
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # --- Configuration ---
 # Path to the directory where you cloned the repo
@@ -13,7 +14,9 @@ REPO_PATH = "ardania-md"  # Change this if you cloned it elsewhere
 PERSIST_DIRECTORY = "chroma_db_ardania"
 # Choose your embedding model (use a strong multilingual one)
 # Recommended: "intfloat/multilingual-e5-large", "BAAI/bge-m3"
-MODEL_NAME = "intfloat/multilingual-e5-large"
+MODEL_NAME = "jeffh/intfloat-multilingual-e5-large:f16"
+OLAMA_API_KEY = os.environ.get("OLAMA_API_KEY")
+OLAMA_API_URL = os.environ.get("OLAMA_API_URL")
 # Chunking parameters (experiment with these)
 CHUNK_SIZE = 1000
 CHUNK_OVERLAP = 150
@@ -64,12 +67,14 @@ print(f"Split into {len(docs_split)} chunks.")
 
 # --- Initialize Embedding Model ---
 print(f"Initializing embedding model: {MODEL_NAME}")
-# Specify 'cpu' or 'cuda' if needed, otherwise it defaults based on availability
-model_kwargs = {"device": "cpu"}  # Or 'cuda' if you have a GPU and PyTorch installed
-encode_kwargs = {"normalize_embeddings": True}  # Normalizing is often recommended
 
-embeddings = HuggingFaceEmbeddings(
-    model_name=MODEL_NAME, model_kwargs=model_kwargs, encode_kwargs=encode_kwargs
+heders = headers = {
+    "Authorization": f"Bearer {OLAMA_API_KEY}",
+}
+embeddings = OllamaEmbeddings(
+    model=MODEL_NAME,
+    base_url=OLAMA_API_URL,
+    client_kwargs={"headers": headers},
 )
 
 # --- Create and Persist Chroma Vector Store ---
