@@ -17,25 +17,27 @@ load_dotenv()
 os.environ["LANGSMITH_TRACING"] = "true"
 os.environ["LANGSMITH_API_KEY"] = os.environ.get("LANGSMITH_API_KEY")
 
-# embeddings = OllamaEmbeddings(model="DC1LEX/nomic-embed-text-v1.5-multimodal:latest")
-model_kwargs = {"device": "cpu"}  # Or 'cuda' if you have a GPU and PyTorch installed
-encode_kwargs = {"normalize_embeddings": True}  # Normalizing is often recommended
-embeddings = HuggingFaceEmbeddings(
-    model_name="intfloat/multilingual-e5-large",
-    model_kwargs=model_kwargs,
-    encode_kwargs=encode_kwargs,
-)
+OLAMA_API_KEY = os.environ.get("OLAMA_API_KEY")
+OLAMA_API_URL = os.environ.get("OLAMA_API_URL")
+MODEL = "gemma3:12b"
+
+embeddings = HuggingFaceEmbeddings(model_name="intfloat/multilingual-e5-large")
 
 vector_store = Chroma(
     embedding_function=embeddings,
     persist_directory="./chroma_db_ardania",  # Where to save data locally, remove if not necessary
 )
 
-
+heders = headers = {
+    "Authorization": f"Bearer {OLAMA_API_KEY}",
+}
 llm = ChatOllama(
-    model="qwen3:8b",
+    base_url=OLAMA_API_URL,
+    client_kwargs={"headers": headers},
+    model=MODEL,
     temperature=0,
 )
+
 
 PROMPT_TEMPLATE = """
 Sei un assistente che fornisce informazioni sul mondo di Ardania GDR Ultima On Line.

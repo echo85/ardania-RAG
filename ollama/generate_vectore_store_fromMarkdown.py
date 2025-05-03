@@ -6,7 +6,6 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 
-
 # --- Configuration ---
 # Path to the directory where you cloned the repo
 REPO_PATH = "ardania-md"  # Change this if you cloned it elsewhere
