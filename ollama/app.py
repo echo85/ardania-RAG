@@ -1,5 +1,5 @@
 import streamlit as st
-import agent_logic
+import agent
 import os
 
 # --- Page Configuration ---
@@ -9,9 +9,9 @@ st.caption("Ask me anything about Ardania GDR Ultima Online!")
 
 # --- Environment Variable Check (Optional but Recommended) ---
 # Check if necessary environment variables are set, especially OLAMA_API_URL
-if not os.path.exists(agent_logic.CHROMA_DB_PATH):
+if not os.path.exists(agent.CHROMA_DB_PATH):
     st.warning(
-        f"ChromaDB path '{agent_logic.CHROMA_DB_PATH}' not found. Ensure the vector database exists.",
+        f"ChromaDB path '{agent.CHROMA_DB_PATH}' not found. Ensure the vector database exists.",
         icon="⚠️",
     )
 
@@ -21,8 +21,8 @@ if not os.path.exists(agent_logic.CHROMA_DB_PATH):
 def load_agent_graph():
     """Loads the agent components and builds the graph."""
     try:
-        llm, embeddings, vector_store = agent_logic.initialize_components()
-        graph = agent_logic.build_graph(llm, embeddings, vector_store)
+        llm, embeddings, vector_store = agent.initialize_components()
+        graph = agent.build_graph(llm, embeddings, vector_store)
         return graph
     except ConnectionError as ce:
         st.error(f"Failed to initialize agent components: {ce}", icon="🚨")

@@ -32,13 +32,13 @@ def retrieve(user_input: str) -> str:
         text=user_input, k_nearest_neighbors=30, fields=index_vector_field
     )
     search_results = search_client.search(
-        search_text=user_input,
+        #search_text=user_input,
         vector_queries=[vector_query],
         select=[index_field_content],
-        top=5,
+        top=10,
     )
 
-    sources_formatted = "=================\n".join(
+    sources_formatted = "\n\n".join(
         [
             f"{document[index_field_content]}"
             for document in search_results
@@ -51,8 +51,10 @@ def retrieve(user_input: str) -> str:
 def get_response(user_input: str) -> str:
     user_msg = UserMessage(content=user_input)
     system_msg = SystemMessage(
-        content="""Sei un assistente che fornisce informazioni sul mondo di Ardania GDR Ultima On Line.
-        Rispondi alla domanda in base al contesto fornito di seguito:"""
+        content="""Sei un assistente AI specializzato sul mondo di Ardania GDR Ultima On Line.
+    Rispondi alla domanda dell'utente basandoti ESCLUSIVAMENTE sulle informazioni contenute nelle Fonti fornite di seguito.
+    Non aggiungere informazioni non presenti nelle fonti.
+    Se le fonti non contengono informazioni sufficienti per rispondere alla domanda, rispondi dicendo che non hai trovato informazioni pertinenti nel contesto fornito."""
     )
 
     chat_messages = [system_msg, user_msg]
@@ -64,9 +66,18 @@ def get_response(user_input: str) -> str:
     result = client.complete(
         model=model_name,
         messages=chat_messages,
-        temperature=0.7
+        temperature=0
     )
-    return result.choices[0].message.content
+    raw_content = result.choices[0].message.content
+    prefix_to_remove = "<|im_start|>assistant<|im_sep|>"
+
+    if raw_content.startswith(prefix_to_remove):
+        # Rimuovi il prefisso e anche eventuali spazi bianchi iniziali rimasti
+        cleaned_content = raw_content[len(prefix_to_remove):].lstrip()
+        return cleaned_content
+    else:
+        # Se il prefisso non c'è, restituisci il contenuto com'è
+        return raw_content
 
 def main():
     try:
