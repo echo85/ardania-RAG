@@ -5,17 +5,17 @@ from langchain_chroma import Chroma
 from langchain_ollama import OllamaEmbeddings
 
 embeddings = OllamaEmbeddings(
-    model="DC1LEX/nomic-embed-text-v1.5-multimodal:latest",
+    model="jeffh/intfloat-multilingual-e5-large:f16",
 )
 
 vector_store = Chroma(
     collection_name="ardania_collection",
     embedding_function=embeddings,
-    persist_directory="./chroma_langchain_dbnomic15",  # Where to save data locally, remove if not necessary
+    persist_directory="./chroma_db_ardania",  # Where to save data locally, remove if not necessary
 )
 
 # Directory to your pdf files:
-DATA_PATH = "../data/"
+DATA_PATH = "./data/"
 
 
 def load_documents():
@@ -34,7 +34,7 @@ def load_documents():
 documents = load_documents()  # Call the function
 text_splitter = RecursiveCharacterTextSplitter(
     chunk_size=1000,  # Size of each chunk in characters
-    chunk_overlap=200,  # Overlap between consecutive chunks
+    chunk_overlap=150,  # Overlap between consecutive chunks
     length_function=len,  # Function to compute the length of the text
     add_start_index=True,  # Flag to add start index to each chunk
 )

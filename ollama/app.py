@@ -56,10 +56,6 @@ if prompt := st.chat_input("What is your question about Ardania?"):
         message_placeholder = st.empty()  # Use a placeholder for streaming-like effect
         full_response = ""
         try:
-            # Invoke the graph
-            # Note: LangGraph's .stream() might yield intermediate states.
-            # For a simple chat UI, invoking and getting the final answer might be simpler.
-            # If streaming tokens is desired, the agent_logic and this part would need adjustment.
             final_state = agent_graph.invoke({"question": prompt})
             full_response = final_state.get(
                 "answer", "Sorry, I couldn't generate a response."
