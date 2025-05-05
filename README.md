@@ -12,7 +12,7 @@ There is both Azure-based and open-source implementations of the agent:
 ---
 
 ### ☁️ Azure Implementation  
-Utilizes **Azure AI Search** and **GPT-4o** for scalable, enterprise-grade performance.
+Utilizes **Azure AI Search** and **GPT-4o/Phi-4** for scalable, enterprise-grade performance.
 
 - **Agent Code**:  
   [azure/agent.py](https://github.com/echo85/ardania-RAG/blob/main/azure/agent.py)
@@ -45,8 +45,8 @@ Built with **Ollama**, **LangChain**, and **Chroma** – ideal for local develop
 
   ```bash
   cd ollama
-  python -m .venv .venv
-  source ./venv/bin/activate
+  python -m venv .venv
+  source .venv/bin/activate
   pip install -r requirements.txt`
   git clone https://jacklake-tm.github.io/ardania-md
   python generate_vectore_store_fromMarkdown.py
