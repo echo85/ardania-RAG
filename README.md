@@ -24,10 +24,10 @@ Utilizes **Azure AI Search** and **GPT-4o/Phi-4** for scalable, enterprise-grade
 
    ```bash
   cd azure
-  python -m .venv .venv
-  source ./venv/bin/activate
+  python -m venv .venv
+  source .venv/bin/activate
   pip install -r requirements.txt`
-  git clone https://jacklake-tm.github.io/ardania-md
+  git clone https://jacklake-tm.github.io/ardania-md # you should upload it on Azure AI Search storage container
   streamlit run app.py
   ```
 ---
