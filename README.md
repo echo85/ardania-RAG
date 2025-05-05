@@ -19,7 +19,7 @@ Utilizes **Azure AI Search** and **GPT-4o** for scalable, enterprise-grade perfo
 
 - **USAGE**:
 
-  It's required to create ad [AI Azure Search](https://learn.microsoft.com/en-us/azure/search/search-get-started-portal-import-vectors?tabs=sample-data-storage%2Cmodel-aoai%2Cconnect-data-storage) index called "ardaniamd-index"
+  It's required to create an [AI Azure Search](https://learn.microsoft.com/en-us/azure/search/search-get-started-portal-import-vectors?tabs=sample-data-storage%2Cmodel-aoai%2Cconnect-data-storage) index called "ardaniamd-index"
   Index JSON: [azure/index.json](https://github.com/echo85/ardania-RAG/blob/main/azure/index.json)
 
    ```bash
